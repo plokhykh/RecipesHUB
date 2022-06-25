@@ -20,6 +20,7 @@ public class Recipe {
     private int id;
     private String title;
     private String description;
+    private String image;
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(
@@ -35,17 +36,19 @@ public class Recipe {
     private List<IngredientQuantity> ingredientQuantities = new ArrayList<>();
 
 
-    public Recipe(String title, String description, List<CategoryRecipe> categories, String author) {
+    public Recipe(String title, String description, String image, List<CategoryRecipe> categories, String author) {
         this.title = title;
         this.description = description;
+        this.image = image;
         this.categories = categories;
         this.author = author;
     }
 
-    public Recipe(int id, String title, String description, List<CategoryRecipe> categories, String author) {
+    public Recipe(int id, String title, String description, String image, List<CategoryRecipe> categories, String author) {
         this.id = id;
         this.title = title;
         this.description = description;
+        this.image = image;
         this.categories = categories;
         this.author = author;
     }

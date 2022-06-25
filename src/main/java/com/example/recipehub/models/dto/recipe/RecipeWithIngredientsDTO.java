@@ -14,14 +14,17 @@ public class RecipeWithIngredientsDTO {
     private int id;
     private String title;
     private String description;
-    private List<CategoryRecipeWithSubcategoriesDTO> categories;
+    private String image;
     private String author;
+    private List<CategoryRecipeWithSubcategoriesDTO> categories;
     private List<IngredientDTO> ingredients = new ArrayList<>();
+
 
     public RecipeWithIngredientsDTO(Recipe recipe) {
         this.id = recipe.getId();
         this.title = recipe.getTitle();
         this.description = recipe.getDescription();
+        this.image = getImage();
         this.author = recipe.getAuthor();
         if (recipe.getIngredientQuantities() != null) {
             this.ingredients = recipe.getIngredientQuantities()
@@ -35,6 +38,7 @@ public class RecipeWithIngredientsDTO {
         this.id = recipe.getId();
         this.title = recipe.getTitle();
         this.description = recipe.getDescription();
+        this.image = recipe.getImage();
         this.author = recipe.getAuthor();
         if (recipe.getIngredientQuantities() != null) {
             this.ingredients = recipe.getIngredientQuantities()

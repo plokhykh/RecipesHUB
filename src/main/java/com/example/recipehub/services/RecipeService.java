@@ -15,7 +15,10 @@ import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -23,12 +26,13 @@ import java.util.stream.Collectors;
 @Service
 @AllArgsConstructor
 public class RecipeService {
+    final String path = System.getProperty("user.home") + File.separator + "imageMeals" + File.separator;
     private RecipeDAO recipeDAO;
     IngredientService ingredientService;
     CategoryRecipeService categoryRecipeService;
     HelperService helperService;
 
-    public RecipeWithIngredientsDTO createRecipe(RecipeWithIngredientsIdDTO recipe) {
+    public RecipeWithIngredientsDTO createRecipe(RecipeWithIngredientsIdDTO recipe, MultipartFile image) throws IOException {
         List<CategoryRecipe> categories = recipe.getCategories()
                 .stream()
                 .map(id -> categoryRecipeService.findCategoryRecipe(id))
@@ -37,6 +41,7 @@ public class RecipeService {
         Recipe newRecipe = new Recipe(
                 recipe.getTitle(),
                 recipe.getDescription(),
+                image.getOriginalFilename(),
                 categories,
                 recipe.getAuthor()
         );
@@ -50,14 +55,19 @@ public class RecipeService {
 
         List<CategoryRecipeWithSubcategoriesDTO> categoryRecipeWithSubcategoriesDTOS = helperService.transformToListCategoryWithSubcategories(categories);
 
-        return new RecipeWithIngredientsDTO(
+        RecipeWithIngredientsDTO recipeWithIngredientsDTO = new RecipeWithIngredientsDTO(
                 recipeDAO.save(newRecipe),
                 categoryRecipeWithSubcategoriesDTOS
         );
+
+        image.transferTo(new File(path + image.getOriginalFilename()));
+
+        return recipeWithIngredientsDTO;
     }
 
+
     public ResponseEntity<PageImpl<RecipeWithIngredientsDTO>> getAllRecipes(RecipePage recipePage) {
-        Pageable pageable = PageRequest.of(recipePage.getPage(), recipePage.getSize());
+        Pageable pageable = PageRequest.of(recipePage.getPage() - 1, recipePage.getSize());
         Page<Recipe> recipes = recipeDAO.findAll(pageable);
 
         if (recipes == null) {
@@ -96,7 +106,7 @@ public class RecipeService {
         return new ResponseEntity<>(recipes, HttpStatus.OK);
     }
 
-    public ResponseEntity<RecipeWithIngredientsDTO> updateRecipeById(int id, RecipeWithIngredientsIdDTO recipe) {
+    public ResponseEntity<RecipeWithIngredientsDTO> updateRecipeById(int id, RecipeWithIngredientsIdDTO recipe, MultipartFile image) throws IOException {
         Optional<Recipe> checkRecipe = recipeDAO.findById(id);
         if (checkRecipe == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -111,6 +121,7 @@ public class RecipeService {
                 id,
                 recipe.getTitle(),
                 recipe.getDescription(),
+                image.getOriginalFilename(),
                 categories,
                 recipe.getAuthor()
         );
@@ -121,11 +132,16 @@ public class RecipeService {
         });
 
         List<CategoryRecipeWithSubcategoriesDTO> categoryRecipeWithSubcategoriesDTOS = helperService.transformToListCategoryWithSubcategories(categories);
+
+        RecipeWithIngredientsDTO recipeWithIngredientsDTO = new RecipeWithIngredientsDTO(
+                recipeDAO.save(updateRecipe),
+                categoryRecipeWithSubcategoriesDTOS
+        );
+
+        image.transferTo(new File(path + image.getOriginalFilename()));
+
         return new ResponseEntity<>(
-                new RecipeWithIngredientsDTO(
-                        recipeDAO.save(updateRecipe),
-                        categoryRecipeWithSubcategoriesDTOS
-                ),
+                recipeWithIngredientsDTO,
                 HttpStatus.OK);
     }
 

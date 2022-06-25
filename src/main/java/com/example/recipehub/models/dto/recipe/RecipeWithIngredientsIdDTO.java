@@ -11,6 +11,7 @@ public class RecipeWithIngredientsIdDTO {
     private int id;
     private String title;
     private String description;
+    private String image;
     private List<Integer> categories = new ArrayList<>();
     private String author;
     private List<IngredientIntoDTO> ingredients = new ArrayList<>();
