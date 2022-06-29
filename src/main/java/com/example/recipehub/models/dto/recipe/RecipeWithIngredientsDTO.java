@@ -29,7 +29,7 @@ public class RecipeWithIngredientsDTO {
         if (recipe.getIngredientQuantities() != null) {
             this.ingredients = recipe.getIngredientQuantities()
                     .stream()
-                    .map(item -> new IngredientDTO(item.getIngredient(), item.getQuantity()))
+                    .map(item ->  new IngredientDTO(item.getIngredient(), item))
                     .collect(Collectors.toList());
         }
     }
@@ -40,12 +40,13 @@ public class RecipeWithIngredientsDTO {
         this.description = recipe.getDescription();
         this.image = recipe.getImage();
         this.author = recipe.getAuthor();
+        this.categories = categoryRecipeWithSubcategoriesDTO;
         if (recipe.getIngredientQuantities() != null) {
             this.ingredients = recipe.getIngredientQuantities()
                     .stream()
-                    .map(item -> new IngredientDTO(item.getIngredient(), item.getQuantity()))
+                    .map(item -> new IngredientDTO(item.getIngredient(), item))
                     .collect(Collectors.toList());
         }
-        this.categories = categoryRecipeWithSubcategoriesDTO;
+
     }
 }

@@ -1,5 +1,6 @@
 package com.example.recipehub.models.entity;
 
+import com.example.recipehub.models.dto.ingredient.IngredientDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -54,9 +55,10 @@ public class Recipe {
     }
 
 
-    public void addIngredient(Ingredient ingredient, int quantity) {
-        IngredientQuantity ingredientQuantity = new IngredientQuantity(this, ingredient, quantity);
+    public void addIngredient(Ingredient ingredient, IngredientDTO calculatedIngredient) {
+        IngredientQuantity ingredientQuantity = new IngredientQuantity(this, ingredient, calculatedIngredient);
         ingredientQuantities.add(ingredientQuantity);
         ingredient.getIngredientQuantities().add(ingredientQuantity);
+
     }
 }

@@ -4,6 +4,7 @@ import com.example.recipehub.dao.RecipeDAO;
 
 import com.example.recipehub.models.RecipePage;
 import com.example.recipehub.models.dto.categoryRecipe.CategoryRecipeWithSubcategoriesDTO;
+import com.example.recipehub.models.dto.ingredient.IngredientDTO;
 import com.example.recipehub.models.dto.recipe.RecipeWithIngredientsIdDTO;
 import com.example.recipehub.models.dto.recipe.RecipeWithIngredientsDTO;
 import com.example.recipehub.models.entity.CategoryRecipe;
@@ -50,7 +51,8 @@ public class RecipeService {
                 .stream()
                 .forEach(item -> {
                     Ingredient ingredient = ingredientService.findFullIngredient(item.getIngredient_id());
-                    newRecipe.addIngredient(ingredient, item.getQuantity());
+                    IngredientDTO calculatedIngredient = new IngredientDTO().calculateNutrientsInIngredient(ingredient, item.getWeight());
+                    newRecipe.addIngredient(ingredient, calculatedIngredient);
                 });
 
         List<CategoryRecipeWithSubcategoriesDTO> categoryRecipeWithSubcategoriesDTOS = helperService.transformToListCategoryWithSubcategories(categories);
@@ -69,10 +71,6 @@ public class RecipeService {
     public ResponseEntity<PageImpl<RecipeWithIngredientsDTO>> getAllRecipes(RecipePage recipePage) {
         Pageable pageable = PageRequest.of(recipePage.getPage() - 1, recipePage.getSize());
         Page<Recipe> recipes = recipeDAO.findAll(pageable);
-
-        if (recipes == null) {
-            new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
 
         List<RecipeWithIngredientsDTO> recipesList = recipes.getContent()
                 .stream()
@@ -108,9 +106,6 @@ public class RecipeService {
 
     public ResponseEntity<RecipeWithIngredientsDTO> updateRecipeById(int id, RecipeWithIngredientsIdDTO recipe, MultipartFile image) throws IOException {
         Optional<Recipe> checkRecipe = recipeDAO.findById(id);
-        if (checkRecipe == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
 
         List<CategoryRecipe> categories = recipe.getCategories()
                 .stream()
@@ -126,10 +121,10 @@ public class RecipeService {
                 recipe.getAuthor()
         );
 
-        recipe.getIngredients().stream().forEach(item -> {
-            Ingredient ingredient = ingredientService.findFullIngredient(item.getIngredient_id());
-            updateRecipe.addIngredient(ingredient, item.getQuantity());
-        });
+//        recipe.getIngredients().stream().forEach(item -> {
+//            Ingredient ingredient = ingredientService.findFullIngredient(item.getIngredient_id());
+//            updateRecipe.addIngredient(ingredient, item.getWeight());
+//        });
 
         List<CategoryRecipeWithSubcategoriesDTO> categoryRecipeWithSubcategoriesDTOS = helperService.transformToListCategoryWithSubcategories(categories);
 
