@@ -14,6 +14,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RecipeIngredientId implements Serializable {
+    private static final long serialVersionUID = -1L;
     private int recipe_id;
     private int ingredient_id;
 }
