@@ -1,10 +1,12 @@
 package com.example.recipehub.controllers;
 
+import com.example.recipehub.models.DefaultPage;
 import com.example.recipehub.models.dto.ingredient.IngredientDTO;
 import com.example.recipehub.models.dto.recipe.RecipeWithIngredientsDTO;
 import com.example.recipehub.models.entity.Ingredient;
 import com.example.recipehub.services.IngredientService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,8 +21,8 @@ public class IngredientController {
     IngredientService ingredientService;
 
     @GetMapping("")
-    public ResponseEntity<List<IngredientDTO>> getAllIngredients() {
-        return ingredientService.getAllIngredients();
+    public ResponseEntity<PageImpl<IngredientDTO>> getAllIngredients(DefaultPage ingredientPage) {
+        return ingredientService.getAllIngredients(ingredientPage);
     }
 
     @GetMapping("/{id}")

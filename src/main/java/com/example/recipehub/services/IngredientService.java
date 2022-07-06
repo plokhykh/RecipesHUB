@@ -1,17 +1,21 @@
 package com.example.recipehub.services;
 
 import com.example.recipehub.dao.IngredientDAO;
+import com.example.recipehub.models.DefaultPage;
 import com.example.recipehub.models.dto.ingredient.IngredientDTO;
 import com.example.recipehub.models.dto.recipe.RecipeWithIngredientsDTO;
 import com.example.recipehub.models.entity.Ingredient;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,20 +29,19 @@ public class IngredientService {
     }
 
 
-    public ResponseEntity<List<IngredientDTO>> getAllIngredients() {
-        List<Ingredient> ingredients = ingredientDAO.findAll();
-        if (ingredients == null) {
-            new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
+    public ResponseEntity<PageImpl<IngredientDTO>> getAllIngredients(DefaultPage ingredientPage) {
+        Pageable pageable = PageRequest.of(ingredientPage.getPage() - 1, ingredientPage.getSize());
+        Page<Ingredient> ingredients = ingredientDAO.findAll(pageable);
+        List<IngredientDTO> ingredientsList = ingredients.getContent().stream().map(IngredientDTO::new).collect(Collectors.toList());
+
         return new ResponseEntity<>(
-                ingredients.stream().map(IngredientDTO::new).collect(Collectors.toList()),
+                new PageImpl<>(ingredientsList, pageable, ingredients.getTotalElements()),
                 HttpStatus.OK
         );
     }
 
     public ResponseEntity<IngredientDTO> findByIdIngredient(int id) {
         Ingredient ingredient = ingredientDAO.findById(id).orElse(new Ingredient());
-        if (ingredient == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(
                 new IngredientDTO(ingredient),
                 HttpStatus.OK

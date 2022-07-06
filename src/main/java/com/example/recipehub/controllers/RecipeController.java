@@ -1,17 +1,14 @@
 package com.example.recipehub.controllers;
 
-import com.example.recipehub.models.RecipePage;
+import com.example.recipehub.models.DefaultPage;
 import com.example.recipehub.models.dto.recipe.RecipeWithIngredientsIdDTO;
 import com.example.recipehub.models.dto.recipe.RecipeWithIngredientsDTO;
 import com.example.recipehub.services.RecipeService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -33,7 +30,7 @@ public class RecipeController {
     }
 
     @GetMapping("")
-    public ResponseEntity<PageImpl<RecipeWithIngredientsDTO>> getAllRecipes(RecipePage recipePage) {
+    public ResponseEntity<PageImpl<RecipeWithIngredientsDTO>> getAllRecipes(DefaultPage recipePage) {
         return recipeService.getAllRecipes(recipePage);
     }
 

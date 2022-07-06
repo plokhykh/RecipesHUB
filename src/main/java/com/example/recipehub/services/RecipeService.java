@@ -2,7 +2,7 @@ package com.example.recipehub.services;
 
 import com.example.recipehub.dao.RecipeDAO;
 
-import com.example.recipehub.models.RecipePage;
+import com.example.recipehub.models.DefaultPage;
 import com.example.recipehub.models.dto.categoryRecipe.CategoryRecipeWithSubcategoriesDTO;
 import com.example.recipehub.models.dto.ingredient.IngredientDTO;
 import com.example.recipehub.models.dto.recipe.RecipeWithIngredientsIdDTO;
@@ -32,6 +32,8 @@ public class RecipeService {
     IngredientService ingredientService;
     CategoryRecipeService categoryRecipeService;
     HelperService helperService;
+
+
 
     public RecipeWithIngredientsDTO createRecipe(RecipeWithIngredientsIdDTO recipe, MultipartFile image) throws IOException {
         List<CategoryRecipe> categories = recipe.getCategories()
@@ -68,7 +70,7 @@ public class RecipeService {
     }
 
 
-    public ResponseEntity<PageImpl<RecipeWithIngredientsDTO>> getAllRecipes(RecipePage recipePage) {
+    public ResponseEntity<PageImpl<RecipeWithIngredientsDTO>> getAllRecipes(DefaultPage recipePage) {
         Pageable pageable = PageRequest.of(recipePage.getPage() - 1, recipePage.getSize());
         Page<Recipe> recipes = recipeDAO.findAll(pageable);
 
@@ -90,7 +92,6 @@ public class RecipeService {
     public ResponseEntity<RecipeWithIngredientsDTO> getRecipeById(int id) {
         Recipe recipe = recipeDAO.findById(id).orElse(new Recipe());
 
-        if (recipe == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         List<CategoryRecipeWithSubcategoriesDTO> categoryRecipeWithSubcategoriesDTOS = helperService.transformToListCategoryWithSubcategories(recipe.getCategories());
 
         return new ResponseEntity<>(new RecipeWithIngredientsDTO(recipe, categoryRecipeWithSubcategoriesDTOS), HttpStatus.OK);

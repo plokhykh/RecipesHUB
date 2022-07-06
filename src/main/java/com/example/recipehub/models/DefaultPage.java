@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class RecipePage {
+public class DefaultPage {
     private int page = 1;
     private int size = 10;
 }
