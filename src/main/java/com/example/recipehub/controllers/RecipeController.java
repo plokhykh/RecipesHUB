@@ -3,15 +3,16 @@ package com.example.recipehub.controllers;
 import com.example.recipehub.models.DefaultPage;
 import com.example.recipehub.models.dto.recipe.RecipeWithIngredientsIdDTO;
 import com.example.recipehub.models.dto.recipe.RecipeWithIngredientsDTO;
-import com.example.recipehub.services.RecipeService;
+import com.example.recipehub.services.recipe.IRecipeService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
 
@@ -20,41 +21,41 @@ import java.util.List;
 @RequestMapping("/recipes")
 @AllArgsConstructor
 public class RecipeController {
-    RecipeService recipeService;
-
-    @PostMapping(value = "")
-    public ResponseEntity<RecipeWithIngredientsDTO> createRecipe(@RequestParam String recipe, @RequestParam(required = false) MultipartFile image) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        RecipeWithIngredientsIdDTO recipeDTO = mapper.readValue(recipe, RecipeWithIngredientsIdDTO.class);
-        return new ResponseEntity<>(recipeService.createRecipe(recipeDTO, image), HttpStatus.CREATED);
-    }
+    IRecipeService recipeService;
 
     @GetMapping("")
-    public ResponseEntity<PageImpl<RecipeWithIngredientsDTO>> getAllRecipes(DefaultPage recipePage) {
-        return recipeService.getAllRecipes(recipePage);
+    public PageImpl<RecipeWithIngredientsDTO> getAll(DefaultPage recipePage, @RequestParam(required = false) String q) {
+        return recipeService.getAll(recipePage, q);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<RecipeWithIngredientsDTO> getRecipeById(@PathVariable int id) {
-        return recipeService.getRecipeById(id);
+    public RecipeWithIngredientsDTO getById(@PathVariable int id) {
+        return recipeService.getById(id);
     }
 
     @GetMapping("/by_categories/{id}")
-    public ResponseEntity<List<RecipeWithIngredientsDTO>> getRecipesByCategories(@PathVariable int id) {
-        return recipeService.getRecipesByCategories(id);
+    public List<RecipeWithIngredientsDTO> getByCategories(@PathVariable int id) {
+        return recipeService.getByCategories(id);
     }
 
-
-    @PatchMapping("/{id}")
-    public ResponseEntity<RecipeWithIngredientsDTO> updateRecipeById(@PathVariable int id, @RequestParam String recipe, @RequestParam(required = false) MultipartFile image) throws IOException {
+    @PostMapping(value = "")
+    @ResponseStatus(HttpStatus.CREATED)
+    public RecipeWithIngredientsDTO create(@RequestParam String recipe, @RequestParam(required = false) MultipartFile image) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         RecipeWithIngredientsIdDTO recipeDTO = mapper.readValue(recipe, RecipeWithIngredientsIdDTO.class);
-        return recipeService.updateRecipeById(id, recipeDTO, image);
+        return recipeService.create(recipeDTO, image);
+    }
+
+    @PatchMapping("/{id}")
+    public RecipeWithIngredientsDTO update(@PathVariable int id, @RequestParam String recipe, @RequestParam(required = false) MultipartFile image) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        RecipeWithIngredientsIdDTO recipeDTO = mapper.readValue(recipe, RecipeWithIngredientsIdDTO.class);
+        return recipeService.updateById(id, recipeDTO, image);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteRecipe(@PathVariable int id) {
-        recipeService.deleteRecipe(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteById(@PathVariable int id) {
+        recipeService.deleteById(id);
     }
 }

@@ -33,9 +33,9 @@ public class HelperService {
     public List<CategoryRecipeWithSubcategoriesDTO> transformToListCategoryWithSubcategories(List<CategoryRecipe> categories) {
         List<CategoryRecipe> mainCategory = categories.stream().filter(item -> item.getParent() == 0).collect(Collectors.toList());
         List <CategoryRecipeWithSubcategoriesDTO> categoryRecipeWithSubcategoriesDTOS = new ArrayList<>();
-        mainCategory.stream().forEach(category -> {
+        mainCategory.forEach(category -> {
            List <SubcategoryRecipeDTO> subCategoriesDTO = new ArrayList<>();
-            categories.stream().forEach(subcategory -> {
+            categories.forEach(subcategory -> {
                 if(category.getId() == subcategory.getParent()){
                     subCategoriesDTO.add(new SubcategoryRecipeDTO(subcategory.getId(), subcategory.getName()));
                 }

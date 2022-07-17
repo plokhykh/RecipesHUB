@@ -3,6 +3,9 @@ package com.example.recipehub.models.dto.recipe;
 import com.example.recipehub.models.dto.ingredient.IngredientIntoDTO;
 import lombok.Data;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -1,5 +1,6 @@
 package com.example.recipehub.models.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,9 +13,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-
 public class CategoryRecipe {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;

@@ -10,6 +10,5 @@ import java.util.List;
 public interface CategoryRecipeDAO extends JpaRepository<CategoryRecipe, Integer> {
 
     List<CategoryRecipe> findAllByParentOrId (int parent, int id);
-    void deleteAllByParent (int parent);
 
 }

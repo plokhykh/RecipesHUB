@@ -4,51 +4,50 @@ import com.example.recipehub.models.DefaultPage;
 import com.example.recipehub.models.dto.ingredient.IngredientDTO;
 import com.example.recipehub.models.dto.recipe.RecipeWithIngredientsDTO;
 import com.example.recipehub.models.entity.Ingredient;
-import com.example.recipehub.services.IngredientService;
+import com.example.recipehub.services.ingredient.IIngredientService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashSet;
-import java.util.List;
 
 @RestController
 @RequestMapping("/ingredients")
 @AllArgsConstructor
 public class IngredientController {
-    IngredientService ingredientService;
+    IIngredientService ingredientService;
 
     @GetMapping("")
-    public ResponseEntity<PageImpl<IngredientDTO>> getAllIngredients(DefaultPage ingredientPage) {
-        return ingredientService.getAllIngredients(ingredientPage);
+    public PageImpl<IngredientDTO> getAll(DefaultPage ingredientPage) {
+        return ingredientService.getAll(ingredientPage);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<IngredientDTO> findByIdIngredient(@PathVariable int id) {
-        return ingredientService.findByIdIngredient(id);
+    public IngredientDTO findById(@PathVariable int id) {
+        return ingredientService.findById(id);
     }
 
     @GetMapping("/{id}/recipes")
-    public ResponseEntity<HashSet<RecipeWithIngredientsDTO>> findRecipesByIngredient(@PathVariable int id) {
-        return ingredientService.findRecipesByIngredient(id);
+    public HashSet<RecipeWithIngredientsDTO> findByIdAllRecipes(@PathVariable int id) {
+        return ingredientService.findByIdAllRecipes(id);
     }
 
     @PostMapping("")
-    public ResponseEntity<IngredientDTO> createIngredient(@RequestBody Ingredient ingredient) {
-        return new ResponseEntity<>(ingredientService.createIngredient(ingredient), HttpStatus.CREATED);
+    @ResponseStatus(HttpStatus.CREATED)
+    public IngredientDTO create(@RequestBody Ingredient ingredient) {
+        return ingredientService.create(ingredient);
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<IngredientDTO> updateIngredient(@PathVariable int id, @RequestBody Ingredient ingredient) {
-        return ingredientService.updateIngredient(id, ingredient);
+    public IngredientDTO update(@PathVariable int id, @RequestBody Ingredient ingredient) {
+        return ingredientService.update(id, ingredient);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteIngredient(@PathVariable int id) {
-        ingredientService.deleteIngredient(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteById (@PathVariable int id) {
+        ingredientService.deleteById(id);
     }
 
 }
